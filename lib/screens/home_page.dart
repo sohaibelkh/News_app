@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/components/list_title.dart';
 
-import '../model/article_model.dart';
-import '../services/api_service.dart';
+import '../../model/article_model.dart';
+import '../../services/api_service.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -10,10 +11,9 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
 class _MyHomePageState extends State<MyHomePage> {
-  
   ApiService client = ApiService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,17 +24,19 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: Colors.white,
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<List<Article>>(
         future: client.getArticle(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Article> articles = snapshot.data!;
-            print(articles);
-            return Center(
-              child: Text('Success!'),
-            );
+            return ListView.builder(
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                return CustomListTitle(article: articles[index]);
+              },
+              );
           } else {
-            return Text('no data');
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
